@@ -35,17 +35,21 @@ Monte Carlo charts show cumulative dollar-P&L percentiles from one million
 trials. In each trial, one of the 76 pairs is selected uniformly and
 independently for each holding week.
 
-### ICE Brent (`CO`)
+### ICE Brent (`CO`) sensitivity
 
-| Sensitivity | Monte Carlo |
-|---|---|
-| ![Brent sensitivity heatmap](outputs/CO_sensitivity.png) | ![Brent Monte Carlo P&L percentiles](outputs/CO_monte_carlo.png) |
+![Brent sensitivity heatmap](outputs/CO_sensitivity.png)
 
-### WTI (`CL`)
+### ICE Brent (`CO`) Monte Carlo
 
-| Sensitivity | Monte Carlo |
-|---|---|
-| ![WTI sensitivity heatmap](outputs/CL_sensitivity.png) | ![WTI Monte Carlo P&L percentiles](outputs/CL_monte_carlo.png) |
+![Brent Monte Carlo P&L percentiles](outputs/CO_monte_carlo.png)
+
+### WTI (`CL`) sensitivity
+
+![WTI sensitivity heatmap](outputs/CL_sensitivity.png)
+
+### WTI (`CL`) Monte Carlo
+
+![WTI Monte Carlo P&L percentiles](outputs/CL_monte_carlo.png)
 
 ## Data and execution
 
@@ -57,7 +61,6 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 python src/process_data.py
 python src/backtest.py
-python -m unittest discover -s tests
 ```
 
 Place the settlement/expiration workbook and annual ICE `COTHistYYYY.csv`

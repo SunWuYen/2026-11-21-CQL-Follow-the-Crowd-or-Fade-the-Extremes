@@ -183,31 +183,41 @@ def monte_carlo_percentiles(
 def save_figures(ticker: str, sharpe: pd.DataFrame, percentiles: pd.DataFrame) -> None:
     # Plot the parameter sensitivity heatmap and simulated percentile paths.
     fig, ax = plt.subplots(figsize=(15, 7), constrained_layout=True)
-    image = ax.imshow(sharpe.to_numpy(dtype=float), cmap="YlGnBu", vmin=-0.8, vmax=0.8, aspect="equal")
-    ax.set_xticks(np.arange(len(sharpe.columns)), sharpe.columns)
-    ax.set_yticks(np.arange(len(sharpe.index)), sharpe.index)
-    ax.set_xlabel("Look-back period N (weeks)")
-    ax.set_ylabel("Look-back period M (weeks)")
-    ax.set_title(f"Follow {ticker} MM: Sharpe ratios for M and N", pad=16)
-    fig.colorbar(image, ax=ax, orientation="horizontal", pad=0.16, label="Annualized weekly Sharpe")
-    fig.savefig(config.OUTPUTS_DIR / f"{ticker}_sensitivity.png", dpi=180)
+    image = ax.imshow(
+        sharpe.to_numpy(dtype=float), cmap="YlGnBu",
+        vmin=-0.8, vmax=0.8, aspect="equal",
+    )
+    ax.set_xticks(np.arange(len(sharpe.columns)), sharpe.columns, fontsize=14)
+    ax.set_yticks(np.arange(len(sharpe.index)), sharpe.index, fontsize=14)
+    ax.set_xlabel("Look-back period N (weeks)", fontsize=17, labelpad=12)
+    ax.set_ylabel("Look-back period M (weeks)", fontsize=17, labelpad=12)
+    ax.set_title(f"Follow {ticker} MM: Sharpe ratios for M and N",
+                 fontsize=21, pad=20, fontweight="bold")
+    colorbar = fig.colorbar(
+        image, ax=ax, orientation="horizontal", pad=0.18,
+        label="Annualized weekly Sharpe",
+    )
+    colorbar.set_label("Annualized weekly Sharpe", fontsize=15, labelpad=10)
+    colorbar.ax.tick_params(labelsize=13)
+    fig.savefig(config.OUTPUTS_DIR / f"{ticker}_sensitivity.png", dpi=220)
     plt.close(fig)
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(16, 8), constrained_layout=True)
     for percentile in percentiles.columns:
         key = percentile in (5, 10, 50, 90, 95)
         ax.plot(percentiles.index, percentiles[percentile],
                 label=f"{percentile}th" if key else None,
-                linewidth=2 if key else 1, alpha=1 if key else 0.4,
+                linewidth=2.8 if key else 1.2, alpha=1 if key else 0.45,
                 linestyle="-" if key else "--", color=None if key else "black")
-    ax.set_title(f"Follow {ticker} MM: simulated cumulative P&L percentiles")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Cumulative P&L ($)")
+    ax.set_title(f"Follow {ticker} MM: simulated cumulative P&L percentiles",
+                 fontsize=21, pad=18, fontweight="bold")
+    ax.set_xlabel("Date", fontsize=17, labelpad=10)
+    ax.set_ylabel("Cumulative P&L ($)", fontsize=17, labelpad=10)
     ax.yaxis.set_major_formatter(StrMethodFormatter("{x:,.0f}"))
-    ax.legend(title="Percentile")
-    ax.grid()
-    fig.tight_layout()
-    fig.savefig(config.OUTPUTS_DIR / f"{ticker}_monte_carlo.png", dpi=180)
+    ax.tick_params(axis="both", labelsize=14)
+    ax.legend(title="Percentile", title_fontsize=15, fontsize=14, framealpha=0.95)
+    ax.grid(alpha=0.25, linewidth=0.8)
+    fig.savefig(config.OUTPUTS_DIR / f"{ticker}_monte_carlo.png", dpi=200)
     plt.close(fig)
 
 
