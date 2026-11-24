@@ -1,6 +1,6 @@
 # Follow the MM flow
 
-An exploratory moving-average crossover backtest for WTI crude oil (`CL`) and
+An exploratory moving-average crossover backtest for CME WTI crude oil (`CL`) and
 ICE Brent crude oil (`CO`). The pipeline processes settlement prices,
 expiration dates, and Commitments of Traders (CoT) positioning, then calculates
 rolling-contract P&L, strategy results, parameter sensitivity, and Monte Carlo
@@ -15,6 +15,10 @@ moving-average windows `(m, n)`, the weekly signal is the sign of
 - `+1`: long one contract when the short moving average is higher.
 - `-1`: short one contract when the short moving average is lower.
 - `0`: flat when the averages are equal or unavailable.
+
+WTI (`CL`) and Brent (`CO`) are backtested separately, one futures contract
+(1,000 barrels) at a time. Their P&L is not combined into a two-market
+portfolio. Contract rolls use the generic-contract convention described below.
 
 The default backtest uses `m=1` and `n=8`. The sensitivity analysis tests
 `m=1..4` and `n=8..26`. A moving average is calculated over calendar weeks,
