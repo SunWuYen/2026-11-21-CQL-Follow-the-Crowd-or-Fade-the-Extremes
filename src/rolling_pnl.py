@@ -40,9 +40,10 @@ def compute_rolling_pnl(
     if frame.index.max().normalize() > expiry.max():
         raise ValueError(f"{ticker}: expiration table does not cover the price sample.")
     
+    # pnl_contract_at_close is the generic contract number used at that close
+    # to calculate the next observation's P&L.
     # The first close establishes the holding; there is no preceding P&L.
-    result = pd.DataFrame(index=frame.index, columns=["pnl", "contract_at_close"], dtype=float)
-    result.iloc[0, result.columns.get_loc("contract_at_close")] = 1 if is_on_prompt_contract else 2
+    result = pd.DataFrame(index=frame.index, columns=["pnl", "pnl_contract_at_close"], dtype=float)
     
     for i in range(1, len(frame)):
         previous, current = frame.index[i - 1], frame.index[i]
@@ -80,6 +81,15 @@ def compute_rolling_pnl(
         if pd.isna(old_price) or pd.isna(new_price):
             raise ValueError(f"{ticker}: missing settlement for {previous.date()} to {current.date()}.")
         result.at[current, "pnl"] = (float(new_price) - float(old_price)) * multiplier
-        result.at[current, "contract_at_close"] = 1 if is_on_prompt_contract else 2
-    
+        result.at[previous, "pnl_contract_at_close"] = columns.index(previous_col) + 1
+
+    # No subsequent P&L interval exists to identify the final contract.
+    result.at[frame.index[-1], "pnl_contract_at_close"] = 1 if is_on_prompt_contract else 2
+    previous_expired = pd.Series(frame.index, index=frame.index).shift().isin(expiry)
+    previous_contract = result["pnl_contract_at_close"].shift()
+    # Expiry relabels the same contract; only a change after relabeling is a roll.
+    result["roll_at_close"] = previous_contract.notna() & (
+        previous_contract - previous_expired.astype(int) != result["pnl_contract_at_close"]
+    )
+
     return result

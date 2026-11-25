@@ -23,10 +23,14 @@ POSITIONS_FILE = DATA_PROCESSED / "positions.csv"
 PERIOD_START = "2012-01-01"
 PERIOD_END = "2026-08-31"
 
-# Default short and long moving-average windows in weekly reports.
-MA_SHORT = 1
-MA_LONG = 8
+# Short and long moving-average windows in weekly reports.
+SHORT_WINDOWS = range(1, 5)
+LONG_WINDOWS = range(8, 27)
 
 # Independent simulations and seed for reproducible random weekly window choices.
 MONTE_CARLO_TRIALS = 1_000_000
 RANDOM_SEED = 42
+
+# Costs per barrel per executed contract leg; each contract represents 1,000 barrels.
+TRANSACTION_COSTS = (0.0, 0.02, 0.05, 0.10, 0.20)
+IRAN_WAR_WINDOW_START = "2026-03-01"
